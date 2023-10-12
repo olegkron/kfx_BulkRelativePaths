@@ -13,15 +13,15 @@ def restore_script_from_backup(shot_dir_path):
 	all_files = os.listdir(nuke_folder_path)
 
 	# Debug: Print all files
-	print(f"All files: {all_files}")
+	# print(f"All files: {all_files}")
 
 	# Identify Nuke scripts and their backups
 	nuke_scripts = [f for f in all_files if f.endswith('.nk')]
 	nuke_backups = [f for f in all_files if f.endswith('.nk.backup')]
 
 	# Debug: Print Nuke scripts and backups
-	print(f"Nuke Scripts: {nuke_scripts}")
-	print(f"Nuke Backups: {nuke_backups}")
+	# print(f"Nuke Scripts: {nuke_scripts}")
+	# print(f"Nuke Backups: {nuke_backups}")
 
 	# If no backups, return early
 	if not nuke_backups:
@@ -38,10 +38,10 @@ def restore_script_from_backup(shot_dir_path):
 	original_script = latest_backup.replace('.backup', '')
 
 	# If the original script is also present, we should prompt before overwriting
-	if original_script in nuke_scripts:
-		should_restore = input(f"{original_script} already exists. Do you want to restore from backup? (y/n): ")
-		if should_restore.lower() != 'y':
-			return
+	# if original_script in nuke_scripts:
+	# 	should_restore = input(f"{original_script} already exists. Do you want to restore from backup? (y/n): ")
+	# 	if should_restore.lower() != 'y':
+	# 		return
 
 	# Perform the restore by copying
 	backup_path = os.path.join(nuke_folder_path, latest_backup)

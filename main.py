@@ -70,5 +70,5 @@ if __name__ == '__main__':
 	shots_dir_path = "/Users/koalamac/Desktop/SHOTS"
 	# get_shot_scripts(shot_dir_path)
 	# restore_script_from_backup(shot_dir_path)
-	# bulk_process_shots(shots_dir_path)
-	bulk_restore_backups(shots_dir_path)
+	bulk_process_shots(shots_dir_path)
+# bulk_restore_backups(shots_dir_path)
