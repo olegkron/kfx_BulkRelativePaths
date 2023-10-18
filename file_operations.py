@@ -11,6 +11,7 @@ def get_latest_script(dir_path):
 
 	for file_name in sorted_files:
 		if file_name.endswith(".nk"):
+			# print(f"Found latest script: {file_name}")
 			return os.path.join(dir_path, file_name)
 
 
@@ -21,3 +22,24 @@ def create_file_backup(file_path):
 	backup_path = f"{file_path}.backup"
 	shutil.copy(file_path, backup_path)
 	return backup_path
+
+
+def check_file_exists(full_path):
+	if "%" in full_path:
+		dir_name, file_pattern = os.path.split(full_path)
+		file_prefix = file_pattern.split("%")[0]
+		for filename in os.listdir(dir_name):
+			if filename.startswith(file_prefix):
+				return True
+	else:
+		return os.path.exists(full_path)
+	return False
+
+
+def create_directory_if_not_exists(directory_path):
+	if not os.path.exists(directory_path):
+		os.makedirs(directory_path)
+
+
+def copy_file_to_destination(src_path, dest_path):
+	shutil.copy(src_path, dest_path)
