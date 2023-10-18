@@ -14,12 +14,18 @@ from bulk_restore_backups import bulk_restore_backups
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Bulk processing of shots or restoring backups')
 	parser.add_argument('--restore', '-r', action='store_true', help='Restore backups instead of processing shots')
+	parser.add_argument('--shots_dir_path', '-s', help='Path to SHOTS directory')
+	parser.add_argument('--move_assets', '-a', action='store_true', help='Move assets to PLATES directory')
 	args = parser.parse_args()
 
 	shots_dir_path = "/Users/koalamac/Desktop/SHOTS"
+	should_move_assets = False
+
+	if args.shots_dir_path: shots_dir_path = args.shots_dir_path
+	if args.move_assets: should_move_assets = True
 	# shots_dir_path = "/Users/koalamac/Desktop/SHOTS"
 
 	if args.restore:
 		bulk_restore_backups(shots_dir_path)
 	else:
-		bulk_process_shots(shots_dir_path)
+		bulk_process_shots(shots_dir_path, should_move_assets)
