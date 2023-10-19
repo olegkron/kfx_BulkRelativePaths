@@ -16,7 +16,8 @@ def bulk_process_shots(shots_dir_path, should_move_assets):
 		log("No shot directories found.", 'ERROR')
 		return
 
-	log("Enter the numbers of the directories to process (comma-separated), 'q' to quit, or 'all' to select all:", 'WARNING')
+	log(f"Enter the numbers of the directories to process{' and move assets ' if should_move_assets else ' '}(comma-separated), 'q' to quit, or 'all' to select all:",
+		'WARNING')
 
 	for i, shot_dir in enumerate(shot_dirs):
 		print(f"{i + 1}: {shot_dir}")
@@ -39,6 +40,5 @@ def bulk_process_shots(shots_dir_path, should_move_assets):
 		shot_dir = shot_dirs[idx]
 		shot_dir_path = os.path.join(shots_dir_path, shot_dir)
 		get_shot_scripts(shot_dir_path, should_move_assets)
-	# log(f"Completed processing for {shot_dir_path}", 'INFO')
 
 	log("Completed processing for selected directories.", 'INFO')

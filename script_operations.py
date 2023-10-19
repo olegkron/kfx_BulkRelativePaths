@@ -143,18 +143,23 @@ def generate_relative_path(full_path, shot_dir_path):
 				return relative_path
 
 	# If none of the specified directory names are found, return None
-	log('Could not find relative path', 'ERROR')
+	log(f'Could not find relative path for: {full_path}', 'WARNING')
 	return None
 
 
 def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
+	log(f"Starting asset movement for file: {file_path}", 'DEBUG')
+
 	whitelist = ["Read"]
 	plates_dir = os.path.join(shot_dir_path, 'ASSETS', 'PLATES')
+	log(f"Whitelisted nodes: {whitelist}", 'DEBUG')
+	log(f"Plates directory: {plates_dir}", 'DEBUG')
 
 	current_node = None
 	should_replace = True
 
 	def should_skip_based_on_path(full_path):
+		log(f"Checking if path should be skipped: {full_path}", 'DEBUG')
 		if "SOURCE" in full_path:
 			log("Asset is a SOURCE file. Skipping.", 'DEBUG')
 			return True
@@ -164,6 +169,7 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 		return False
 
 	def handle_file_match(match, full_path):
+		log(f"Handling file match for: {full_path}", 'DEBUG')
 		file_exists = check_file_exists(full_path)
 		if file_exists:
 			create_directory_if_not_exists(plates_dir)
@@ -183,8 +189,10 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 		if last_index == 1:
 			current_node = match.group(1)
 			should_replace = current_node in whitelist
+		# log(f"Current node: {current_node}, Should replace: {should_replace}", 'DEBUG')
 		elif last_index == 2 and should_replace:
 			full_path = match.group(2)
+			log(f"Full path for replacement: {full_path}", 'DEBUG')
 
 			if should_skip_based_on_path(full_path):
 				return match.group(0)
@@ -194,8 +202,10 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 		return match.group(0)
 
 	with open(file_path, 'r+') as f:
+		log(f"Reading file: {file_path}", 'DEBUG')
 		content = f.read()
 		content = re.sub(r'(\w+) {|file (.+)', replace_read_path, content)
 		f.seek(0)
 		f.write(content)
 		f.truncate()
+		log(f"File {file_path} updated successfully", 'DEBUG')

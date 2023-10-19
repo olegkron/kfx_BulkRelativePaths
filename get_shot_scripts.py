@@ -17,6 +17,7 @@ def get_shot_scripts(shot_dir_path, should_move_assets):
 	log(f"Backup created: {backup_path}", 'DEBUG')
 	set_script_to_relative_paths(latest_script, generate_relative_path, shot_dir_path)
 	if should_move_assets:
+		log("Moving assets to PLATES directory...", 'INFO')
 		move_nonlocal_assets_to_plates_dir(latest_script, shot_dir_path)
 	log(f"Created relative paths in: {latest_script}", 'INFO')
 	set_project_directory_to_script(latest_script)

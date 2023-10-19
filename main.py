@@ -14,7 +14,7 @@ def main():
 	parser.add_argument('-loglevel', '-l', help='Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)')
 	args = parser.parse_args()
 
-	should_move_assets = False
+	should_move_assets = args.move_assets or False
 
 	if args.loglevel:
 		config.log_level = args.loglevel
