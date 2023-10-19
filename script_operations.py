@@ -146,7 +146,7 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 
 	def should_skip_based_on_path(full_path):
 		if "SOURCE" in full_path:
-			print("SOURCE file. Skipping.")
+			# print("SOURCE file. Skipping.")
 			return True
 		elif any(keyword in full_path for keyword in ["EXPORTS", "ASSETS"]):
 			print("File within shot. Skipping.")
