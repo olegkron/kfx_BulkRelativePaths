@@ -26,7 +26,7 @@ def set_script_to_relative_paths(file_path, generate_relative_path_func, shot_di
 				else:
 					should_replace = current_node not in blacklist
 
-				log(f"Processing node: {current_node}, should replace: {should_replace}", 'DEBUG')
+			# log(f"Processing node: {current_node}, should replace: {should_replace}", 'DEBUG')
 			elif last_index == 2 and should_replace:  # File path replacement pattern
 				full_path = match.group(2)
 				relative_path = generate_relative_path_func(full_path, shot_dir_path)
@@ -116,6 +116,9 @@ def file_exists_from_relative_path(relative_path, shot_dir_path):
 
 
 def generate_relative_path(full_path, shot_dir_path):
+	# Normalize the path to ensure it works on both Windows and Unix systems
+	full_path = os.path.normpath(full_path)
+
 	# Split the full path into its components
 	path_parts = full_path.split(os.sep)
 
@@ -127,14 +130,20 @@ def generate_relative_path(full_path, shot_dir_path):
 	for idx, part in enumerate(path_parts):
 		if part in ["ASSETS", "EXPORTS", "SOURCE"]:
 			log(f"Found directory: {part}", 'DEBUG')
+
 			# Replace the left part with '../../' and join back into a string
 			relative_path = os.path.join("../../", *path_parts[idx:])
-			# Use the new function to check if the file exists
+
+			# Replace backslashes with forward slashes
+			relative_path = relative_path.replace(os.sep, '/')
+
+			# Use the function to check if the file exists
 			if file_exists_from_relative_path(relative_path, shot_dir_path):
 				log(f"Found relative path: {relative_path}", 'DEBUG')
 				return relative_path
 
 	# If none of the specified directory names are found, return None
+	log('Could not find relative path', 'ERROR')
 	return None
 
 
@@ -147,10 +156,10 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 
 	def should_skip_based_on_path(full_path):
 		if "SOURCE" in full_path:
-			log("SOURCE file. Skipping.", 'DEBUG')
+			log("Asset is a SOURCE file. Skipping.", 'DEBUG')
 			return True
 		elif any(keyword in full_path for keyword in ["EXPORTS", "ASSETS"]):
-			log("File within shot. Skipping.", 'DEBUG')
+			log("Asset within shot. Skipping.", 'DEBUG')
 			return True
 		return False
 

@@ -61,13 +61,9 @@ def log(message, log_type='INFO'):
 	if log_type not in LOG_LEVELS:
 		log_type = 'INFO'
 
-	if LOG_LEVELS[log_type] >= log_level:
-		if log_type == 'ERROR' or log_type == 'CRITICAL':
-			logger.error(message)
-		elif log_type == 'WARNING':
-			logger.warning(message)
-		else:
-			logger.info(message)
+	# Use the built-in logging methods instead of manually checking log levels
+	logging_method = getattr(logger, log_type.lower(), logger.info)
+	logging_method(message)
 
 
 def set_level(level):
