@@ -1,6 +1,8 @@
 import os
 import shutil
 
+from logs import log
+
 
 def get_latest_script(dir_path):
 	# List all the files in dir_path
@@ -11,7 +13,7 @@ def get_latest_script(dir_path):
 
 	for file_name in sorted_files:
 		if file_name.endswith(".nk"):
-			# print(f"Found latest script: {file_name}")
+			log(f"Found latest script: {file_name}", 'DEBUG')
 			return os.path.join(dir_path, file_name)
 
 

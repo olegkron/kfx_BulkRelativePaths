@@ -1,12 +1,14 @@
 import os
 import shutil
 
+from logs import log
+
 
 def restore_script_from_backup(shot_dir_path):
 	nuke_folder_path = os.path.join(shot_dir_path, "SCRIPTS", "NUKE")
 
 	if not os.path.exists(nuke_folder_path):
-		print(f"The directory {nuke_folder_path} does not exist.")
+		log(f"The directory {nuke_folder_path} does not exist.", 'ERROR')
 		return
 
 	# List all files in the Nuke folder
@@ -25,7 +27,7 @@ def restore_script_from_backup(shot_dir_path):
 
 	# If no backups, return early
 	if not nuke_backups:
-		print("No backup found.")
+		log("No backup found.", 'ERROR')
 		return
 
 	# Sort to get the latest backup
@@ -48,4 +50,4 @@ def restore_script_from_backup(shot_dir_path):
 	original_path = os.path.join(nuke_folder_path, original_script)
 
 	shutil.copy(backup_path, original_path)
-	print(f"Restored {original_script} from {latest_backup}")
+	log(f"Restored {original_script} from {latest_backup}", 'INFO')

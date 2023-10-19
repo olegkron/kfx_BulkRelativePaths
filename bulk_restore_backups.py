@@ -1,38 +1,44 @@
 import os
 
+from logs import log
 from restore_script_from_backup import restore_script_from_backup
 
 
 def bulk_restore_backups(shots_dir_path):
 	if not os.path.exists(shots_dir_path):
-		print(f"The directory {shots_dir_path} does not exist.")
+		log(f"The directory {shots_dir_path} does not exist.", 'ERROR')
 		return
 
 	# List all directories in the SHOTS folder
 	all_folders = [f for f in os.listdir(shots_dir_path) if os.path.isdir(os.path.join(shots_dir_path, f))]
 
 	if not all_folders:
-		print("No shot directories found.")
+		log("No shot directories found.", 'ERROR')
 		return
 
-	# Ask the user to select which folders to restore backups
-	print("Select the shot directories to restore backups:")
+	log("Enter the numbers of the directories to restore backups (comma-separated), 'q' to quit, or 'all' to select all:", 'WARNING')
+
 	for i, folder in enumerate(all_folders):
 		print(f"{i + 1}: {folder}")
 
-	selected_indices = input("Enter the numbers of the directories to restore backups (comma-separated): ").strip().split(',')
-	selected_indices = [int(idx) - 1 for idx in selected_indices if idx.isdigit() and 1 <= int(idx) <= len(all_folders)]
+	user_input = input("Your selection: ").strip()
+
+	if user_input.lower() == 'q':
+		log("Quit selected. No directories will be restored.", 'INFO')
+		return
+	elif user_input.lower() == 'all':
+		selected_indices = list(range(len(all_folders)))
+	else:
+		selected_indices = [int(idx) - 1 for idx in user_input.split(',') if idx.isdigit() and 1 <= int(idx) <= len(all_folders)]
 
 	if not selected_indices:
-		print("No valid directories selected for restoring backups.")
+		log("No valid directories selected for restoring backups.", 'ERROR')
 		return
 
 	for idx in selected_indices:
 		folder = all_folders[idx]
 		shot_dir_path = os.path.join(shots_dir_path, folder)
-		print(f"Restoring backups for {shot_dir_path}...")
-
-		# Call restore_script_from_backup for each selected folder
 		restore_script_from_backup(shot_dir_path)
+	# log(f"Restored backups for {shot_dir_path}", 'INFO')
 
-		print(f"Completed restoring backups for {shot_dir_path}\n")
+	log("Completed restoring backups for selected directories.", 'INFO')

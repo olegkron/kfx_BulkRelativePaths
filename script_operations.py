@@ -3,7 +3,9 @@ import os
 import re
 import shutil
 
+import config
 from file_operations import check_file_exists, copy_file_to_destination, create_directory_if_not_exists
+from logs import log
 
 
 def set_script_to_relative_paths(file_path, generate_relative_path_func, shot_dir_path, whitelist=[], blacklist=["Write"]):
@@ -24,8 +26,7 @@ def set_script_to_relative_paths(file_path, generate_relative_path_func, shot_di
 				else:
 					should_replace = current_node not in blacklist
 
-			# print(f"Processing node: {current_node}, should replace: {should_replace}")
-
+				log(f"Processing node: {current_node}, should replace: {should_replace}", 'DEBUG')
 			elif last_index == 2 and should_replace:  # File path replacement pattern
 				full_path = match.group(2)
 				relative_path = generate_relative_path_func(full_path, shot_dir_path)
@@ -101,7 +102,7 @@ def file_exists_from_relative_path(relative_path, shot_dir_path):
 			# print(f"Found files: {matching_files}")
 			return True
 		else:
-			print(f"File not found: {relative_path}")
+			log(f"File not found: {relative_path}", 'WARNING')
 			return False
 
 	# For non-sequence files
@@ -110,7 +111,7 @@ def file_exists_from_relative_path(relative_path, shot_dir_path):
 		return True
 	# print(f"Found file: {relative_path}")
 	else:
-		print(f"File not found: {relative_path}")
+		log(f"File not found: {relative_path}", 'ERROR')
 		return False
 
 
@@ -122,15 +123,15 @@ def generate_relative_path(full_path, shot_dir_path):
 	dir_of_full_path = os.path.dirname(full_path)
 
 	# Iterate through the path components to find the specified directory names
-	print(f"Checking path: {full_path}")
+	log(f"Checking path: {full_path}", "DEBUG")
 	for idx, part in enumerate(path_parts):
 		if part in ["ASSETS", "EXPORTS", "SOURCE"]:
-			print(f"Found directory: {part}")
+			log(f"Found directory: {part}", 'DEBUG')
 			# Replace the left part with '../../' and join back into a string
 			relative_path = os.path.join("../../", *path_parts[idx:])
 			# Use the new function to check if the file exists
 			if file_exists_from_relative_path(relative_path, shot_dir_path):
-				print(f"Found relative path: {relative_path}")
+				log(f"Found relative path: {relative_path}", 'DEBUG')
 				return relative_path
 
 	# If none of the specified directory names are found, return None
@@ -146,10 +147,10 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 
 	def should_skip_based_on_path(full_path):
 		if "SOURCE" in full_path:
-			# print("SOURCE file. Skipping.")
+			log("SOURCE file. Skipping.", 'DEBUG')
 			return True
 		elif any(keyword in full_path for keyword in ["EXPORTS", "ASSETS"]):
-			print("File within shot. Skipping.")
+			log("File within shot. Skipping.", 'DEBUG')
 			return True
 		return False
 
@@ -162,7 +163,7 @@ def move_nonlocal_assets_to_plates_dir(file_path, shot_dir_path):
 
 			# Generate a new relative path
 			new_relative_path = generate_relative_path(destination_path, shot_dir_path)
-			print(f"File has been moved successfully and path changed to: {new_relative_path}")
+			log(f"File has been moved successfully and path changed to: {new_relative_path}", 'DEBUG')
 			return f"file {new_relative_path}"
 		return match.group(0)
 
